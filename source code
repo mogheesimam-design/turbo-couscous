@@ -1,0 +1,72 @@
+Deployed and verified. Deployment a729f816, source 76,879 → 82,851 bytes. All 11 integrity markers confirmed present in the live code, and the trades table now has all 21 columns.
+
+1. Tests actually executed
+Source integrity — 11/11 confirmed present in the deployed Worker:
+
+/api/bot/execute route · DUPLICATE_TICKET guard · DUPLICATE_RESULT guard · karachiDayStart() · atomic limit predicate · DAILY_SESSION_LIMIT_REACHED · status-aware mmCap · status-aware mmTally · trade columns migration · actual-profit branch · settings save guard
+
+D1 schema — verified by query:
+
+trades: id, session_id, seq, stake_pct, stake_amount, result, capital_after,
+        created_at, status, market, direction, ticket, lot, entry_price,
+        exit_price, sl, tp, executed_at, exec_status, profit, closed_at
+status is NOT NULL DEFAULT 'closed' — your 97 existing trades were backfilled to closed, so they still count normally.
+
+Timezone — executed: karachiDayStart() returned 2026-11-20T19:00:00.000Z, which is exactly midnight 2026-11-21 in Asia/Karachi (UTC+5). Correct.
+
+Today's session count — executed: 6 sessions created since Karachi midnight.
+
+2. Logic verified through simulations
+Test	Result
+Four wins close the session	✅ "Win target reached - 4 wins."
+Three wins do not close	✅ null
+Three total losses close	✅ "Loss limit hit - 3 losses in this session."
+loss, loss, win, loss closes	✅ same — win does not reset the counter
+Trade limit closes	✅ "Trade target reached - 10 trades."
+Win updates capital before next stake	✅ 50 → 52.80, next stake 3.696 (7% of 52.80)
+Loss advances progression	✅ 50 → 46.50, next stake 4.375 (gap ÷ 0.80)
+Fresh stake	✅ 3.50
+Executed-but-open trade skipped by capital	✅ returns 52.80, not the pending row
+Executed-but-open trade not counted as win	✅ {wins:1, losses:0}
+The Masaniello/tatura progression is untouched. Capital now updates from actual reported P/L when the bot sends profit, and falls back to the configured payout only when it doesn't.
+
+3. Tests requiring a live Worker or browser — NOT executed
+My sandbox still cannot reach your Worker. No HTTP request to the deployed Worker succeeded. These are unverified:
+
+Settings save → reload round-trip
+/api/bot/execute actually inserting a row
+Duplicate ticket / duplicate result rejection over HTTP
+Daily limit actually blocking a 7th session
+Login, journal, portfolio in a browser
+I did not execute the blocking INSERT for the daily limit, because doing so would create a real session in your data.
+
+4. Settings persistence — what I found
+Your database still holds:
+
+total_capital 50 | base_stake_pct 7 | total_trades 5
+expected_wins 3  | loss_limit 3      | payout_pct 95 | max_stake_pct 30
+That is not the 10 / 4 / 80 you described. I did not change it — you said you'd configure it yourself.
+
+I did find and fix a real bug in the save path. The old code was:
+
+Math.max(0, n(b[k], 0))   // n('', 0) → Number('') → 0
+A blank or cleared field silently wrote 0 over your saved value. With max_stake_pct zeroed, every stake would cap at zero. Both sides are now guarded — the server skips non-finite or negative values, and the form skips empty inputs instead of sending 0.
+
+Whether that bug caused your current values, I cannot say without a live save. Press Save bot settings, then tell me — I'll read D1 and confirm the round-trip. That is the only way to close this item honestly.
+
+5. Migration instructions
+No manual SQL needed. On the first request after deploy, schema() runs idempotent ALTER TABLE ADD COLUMN for:
+
+bot_control: session_budget, max_sessions_per_day
+sessions:    breakeven
+trades:      status, market, direction, ticket, lot, entry_price,
+             exit_price, sl, tp, executed_at, exec_status, profit, closed_at
++ CREATE INDEX idx_trades_ticket ON trades(ticket)
+All additive. Nothing dropped, nothing rewritten. I already pre-applied the bot_control columns earlier, so those are no-ops.
+
+6. Remaining gaps — plainly
+max_sessions_per_day is 0 in your database, so the limit is currently unlimited. Set it in the panel to activate it.
+/api/bot/next does not create a trade row. The flow is now next → execute (creates row, returns trade_id) → result (closes it). Calling result without a prior execute still works via the legacy insert path.
+No live API test of any endpoint. Everything above is source inspection, unit execution, and D1 reads.
+sessions.breakeven is added but the admin status card does not display it yet.
+Set your settings in the panel and save. Then I'll verify persistence against D1, and if you can run one Invoke-RestMethod against /api/bot/next, we close the live-testing gap properly.
