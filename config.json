@@ -1,0 +1,19 @@
+{
+  "mt5_path": "",
+  "mt5_login": "",
+  "mt5_server": "",
+  "symbol": "EURUSD",
+  "timeframe": "M1",
+  "ema_fast": 9,
+  "ema_slow": 21,
+  "ema_trend": 200,
+  "use_trend_filter": true,
+  "max_spread_points": 20,
+  "poll_seconds": 2,
+  "risk_percent": 0.25,
+  "atr_period": 14,
+  "atr_multiplier": 1.5,
+  "reward_risk": 1.0,
+  "magic": 28001,
+  "deviation_points": 20
+}
