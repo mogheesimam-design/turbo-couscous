@@ -1,0 +1,31 @@
+{
+  "cloudflare_url": "https://your-tatura-site.pages.dev",
+  "bot_token": "PASTE_YOUR_BOT_TOKEN_HERE",
+  "website_user": "",
+  "markets": [
+    "EURUSD",
+    "GBPUSD",
+    "XAUUSD"
+  ],
+  "timeframe": "M5",
+  "strategy_mode": "balanced",
+  "scan_interval_sec": 2,
+  "sl_points": 150,
+  "tp_mode": "match_payout",
+  "tp_points": 150,
+  "max_hold_minutes": 0,
+  "sizing_mode": "risk_from_stake",
+  "lot_per_100": 0.05,
+  "ema_fast": 9,
+  "ema_slow": 21,
+  "rsi_period": 14,
+  "rsi_buy_min": 52,
+  "rsi_buy_max": 72,
+  "rsi_sell_max": 48,
+  "rsi_sell_min": 28,
+  "magic_number": 774201,
+  "deviation_points": 20,
+  "auto_trade": true,
+  "bridge_port": 8765,
+  "mt5_path": ""
+}
