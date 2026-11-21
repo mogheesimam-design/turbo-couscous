@@ -1,0 +1,1124 @@
+const PAGE = `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#05080a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tatura">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" type="image/png" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<title>Tatura Model</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#05080a;--line:rgba(255,255,255,.07);--line2:rgba(255,255,255,.13);--txt:#e9f2ee;--dim:#7d8f88;--green:#22c55e;--green2:#10b981;--gold:#f5c451;--red:#f05252}
+html{background:var(--bg)}
+body{min-height:100vh;background:radial-gradient(900px 520px at 12% -12%,rgba(34,197,94,.17),transparent 62%),radial-gradient(720px 440px at 102% -4%,rgba(245,196,81,.11),transparent 58%),radial-gradient(860px 620px at 50% 112%,rgba(16,185,129,.11),transparent 62%),var(--bg);background-attachment:fixed;color:var(--txt);font-family:ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:.01em}
+::selection{background:rgba(34,197,94,.3)}
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px}
+#app{max-width:560px;margin:0 auto;padding:22px 16px 112px}
+#nav{position:fixed;left:12px;right:12px;bottom:12px;display:flex;gap:2px;background:rgba(11,17,16,.84);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line2);border-radius:18px;padding:7px;box-shadow:0 20px 44px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06);z-index:50}
+#nav a{flex:1;text-align:center;text-decoration:none;color:var(--dim);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;padding:10px 2px;border-radius:12px;transition:color .18s,background .18s,box-shadow .18s}
+#nav a.on{color:#04120b;background:linear-gradient(135deg,var(--green),var(--green2));box-shadow:0 8px 20px rgba(34,197,94,.38)}
+.hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.brand{font-size:13px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.brand b{background:linear-gradient(135deg,#eafff4 10%,var(--gold));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.pill{font-size:9.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:5px 11px;border-radius:99px;background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--dim)}
+.pill.live{color:var(--green);border-color:rgba(34,197,94,.45);background:rgba(34,197,94,.1);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(34,197,94,.45)}70%{box-shadow:0 0 0 9px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.pill.rec{color:var(--gold);border-color:rgba(245,196,81,.45);background:rgba(245,196,81,.1)}
+.card{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.014));border:1px solid var(--line);border-radius:20px;padding:18px;margin-bottom:14px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 22px 52px rgba(0,0,0,.38),inset 0 1px 0 rgba(255,255,255,.05);animation:rise .34s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(9px)}to{opacity:1;transform:none}}
+.card h3{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);margin-bottom:14px;font-weight:800}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:14px}
+.row:last-child{border:0}
+.row span{color:var(--dim)}
+.row b{font-variant-numeric:tabular-nums;font-weight:700}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;padding:13px}
+.st .k{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:7px;font-weight:800}
+.st .v{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.win{color:var(--green)}.loss{color:var(--red)}.gold{color:var(--gold)}
+.stage{text-align:center;padding:26px 0 6px}
+.lbl{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:14px;font-weight:800}
+.big{font-size:82px;line-height:1;font-weight:800;letter-spacing:-.045em;font-variant-numeric:tabular-nums;background:linear-gradient(160deg,#ffffff 8%,var(--green) 52%,var(--gold) 108%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 10px 34px rgba(34,197,94,.28))}
+.big small{font-size:30px;-webkit-text-fill-color:var(--dim);color:var(--dim)}
+.sub{font-size:13px;color:var(--dim);margin-top:12px}
+.sub b{color:var(--txt)}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.btn{border:0;border-radius:16px;padding:20px 12px;font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;cursor:pointer;color:#fff;font-family:inherit;transition:transform .12s,box-shadow .2s,filter .2s}
+.btn:active{transform:scale(.97)}
+.btn:hover{filter:brightness(1.07)}
+.btn.win{background:linear-gradient(135deg,#22c55e,#0f9d58);box-shadow:0 12px 30px rgba(34,197,94,.35),inset 0 1px 0 rgba(255,255,255,.28)}
+.btn.loss{background:linear-gradient(135deg,#f05252,#b91c1c);box-shadow:0 12px 30px rgba(240,82,82,.3),inset 0 1px 0 rgba(255,255,255,.22)}
+.btn.ghost{background:rgba(255,255,255,.05);border:1px solid var(--line2);color:var(--txt);font-size:12px;padding:14px;letter-spacing:.1em}
+.btn.primary{background:linear-gradient(135deg,var(--green),var(--green2));color:#04120b;box-shadow:0 12px 30px rgba(34,197,94,.35),inset 0 1px 0 rgba(255,255,255,.3)}
+.btn.full{width:100%}
+.track{height:7px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;margin-top:18px;border:1px solid rgba(255,255,255,.05)}
+.track i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green2),var(--green),var(--gold));transition:width .45s ease}
+.lad{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+.lad i{font-style:normal;font-size:11px;font-weight:700;padding:5px 10px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--dim)}
+.lad i.on{background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.55);color:#8ef0b4;box-shadow:0 0 18px rgba(34,197,94,.28)}
+.warn{font-size:11px;color:var(--gold);margin-top:12px;text-align:center}
+label{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:16px 0 7px;font-weight:800}
+input,select{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--line2);border-radius:12px;padding:13px 14px;color:var(--txt);font-size:15px;font-family:inherit;transition:border-color .18s,background .18s,box-shadow .18s}
+input:focus,select:focus{outline:0;border-color:rgba(34,197,94,.6);background:rgba(34,197,94,.06);box-shadow:0 0 0 3px rgba(34,197,94,.13)}
+select{appearance:none;-webkit-appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+.hint{font-size:11px;color:var(--dim);margin-top:7px;line-height:1.6}
+.sess{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.012));border:1px solid var(--line);border-radius:16px;margin-bottom:10px;overflow:hidden;transition:border-color .18s}
+.sess:hover{border-color:var(--line2)}
+.sh{display:flex;justify-content:space-between;align-items:center;padding:15px 16px;cursor:pointer}
+.sh .d{font-size:13px;font-weight:700}
+.sh .m{font-size:11px;color:var(--dim);margin-top:4px;letter-spacing:.04em}
+.sh .p{font-size:15px;font-weight:800;text-align:right;font-variant-numeric:tabular-nums}
+.sb{border-top:1px solid var(--line);padding:6px 16px 14px;background:rgba(0,0,0,.24)}
+.tr{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:13px}
+.tr:last-child{border:0}
+.tr .n{color:var(--dim);width:22px;font-variant-numeric:tabular-nums}
+.tr .p{flex:1;font-variant-numeric:tabular-nums}
+.tag{font-size:9.5px;font-weight:800;letter-spacing:.1em;padding:4px 9px;border-radius:7px;text-transform:uppercase}
+.tag.win{background:rgba(34,197,94,.14);color:#5ee08f;border:1px solid rgba(34,197,94,.3)}
+.tag.loss{background:rgba(240,82,82,.14);color:#ff8b8b;border:1px solid rgba(240,82,82,.3)}
+.tag.open{background:rgba(245,196,81,.14);color:var(--gold);border:1px solid rgba(245,196,81,.3)}
+.x{background:0;border:0;color:var(--dim);font-size:16px;cursor:pointer;padding:4px 8px;border-radius:8px;transition:.15s}
+.x:hover{color:var(--red);background:rgba(240,82,82,.1)}
+.empty{text-align:center;color:var(--dim);font-size:13px;padding:34px 10px;line-height:1.8}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:98px;background:rgba(11,17,16,.96);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line2);padding:12px 20px;border-radius:12px;font-size:13px;z-index:99;box-shadow:0 18px 44px rgba(0,0,0,.55);animation:rise .25s ease both}
+</style>
+</head>
+<body>
+<div id="app"><div class="empty" style="padding-top:70px">Loading...</div></div>
+<nav id="nav"></nav>
+<button id="installBtn" class="btn primary" style="display:none;position:fixed;left:50%;transform:translateX(-50%);bottom:92px;z-index:60;padding:12px 24px;font-size:12px;box-shadow:0 14px 34px rgba(34,197,94,.45)" onclick="doInstall()">Install app</button>
+<script>
+var S={settings:null,sessions:[],view:'session',active:null,trades:[],open:{},busy:false,user:null,adminUsers:null,bot:null};
+
+function esc(s){return String(s==null?'':s).split('&').join('&amp;').split('<').join('&lt;').split('>').join('&gt;').split('"').join('&quot;');}
+function money(n){return (Math.round((n||0)*100)/100).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});}
+function num(n){return Number(n||0).toLocaleString();}
+function api(p,o){o=o||{};o.credentials='same-origin';o.headers={'Content-Type':'application/json'};return fetch('/api'+p,o).then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error((j&&j.error)||('HTTP '+r.status));return j;});});}
+function toast(m){var d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(function(){d.remove();},2400);}
+
+function modelOf(o){return o.model||'tatura';}
+function ladderOf(o){try{var v=typeof o.ladder==='string'?JSON.parse(o.ladder):o.ladder;if(v&&v.length)return v.map(Number);}catch(e){}return [7,12,18,26,36,48];}
+function curCap(s,t){return t.length?Number(t[t.length-1].capital_after):Number(s.start_capital);}
+function tally(t){var w=0,l=0;for(var i=0;i<t.length;i++){if(t[i].result==='win')w++;else l++;}return {wins:w,losses:l};}
+function streak(t){var n=0;for(var i=t.length-1;i>=0;i--){if(t[i].result==='loss')n++;else break;}return n;}
+function targetAmt(s){return Number(s.start_capital)*Number(s.target_profit_pct||0)/100;}
+
+function peakCap(s,t){
+  var p=Number(s.start_capital);
+  for(var i=0;i<t.length;i++){var c=Number(t[i].capital_after);if(c>p)p=c;}
+  return p;
+}
+
+function stakeFor(s,t){
+  var C=curCap(s,t),R=Number(s.payout_pct)/100,base=Number(s.base_stake_pct||8);
+  var m=modelOf(s),amt=0,mode='base',b=C*base/100,peak=peakCap(s,t);
+  if(m==='tatura'){
+    if(C>=peak){amt=b;mode='base';}
+    else{
+      var gap=peak-C;
+      amt=(R>0)?gap/R:gap;
+      if(amt<b)amt=b;
+      mode='recovery';
+    }
+  }else if(m==='masaniello'){
+    amt=b;mode='flat';
+  }else{
+    var Ld=ladderOf(s);amt=C*Ld[Math.min(streak(t),Ld.length-1)]/100;mode='ladder';
+  }
+  if(!isFinite(amt)||amt<0)amt=0;
+  var cap=C*Number(s.max_stake_pct||100)/100,capped=amt>cap;
+  if(capped)amt=cap;
+  return {amount:amt,pct:C>0?amt/C*100:0,capped:capped,mode:mode,peak:peak};
+}
+function stopReason(s,t){
+  var x=tally(t),cap=curCap(s,t),pnl=cap-Number(s.start_capital);
+  var lim=Number(s.loss_limit||0);
+  if(lim>0&&x.losses>=lim)return 'Loss limit hit - '+x.losses+' losses in this session.';
+  var mt=Number(s.total_trades||0);
+  if(mt>0&&t.length>=mt)return 'Trade target reached - '+mt+' trades.';
+  var ew=Number(s.expected_wins||0);
+  if(ew>0&&x.wins>=ew)return 'Win target reached - '+ew+' wins.';
+  if(cap<=0)return 'Capital exhausted.';
+  if(modelOf(s)==='masaniello'&&pnl>=targetAmt(s))return 'Profit target reached.';
+  return null;
+}
+
+function preview(o){
+  var s={model:modelOf(o),start_capital:Number(o.total_capital||o.start_capital||0),total_trades:Number(o.total_trades||0),
+    payout_pct:Number(o.payout_pct||0),target_profit_pct:Number(o.target_profit_pct||0),
+    base_stake_pct:Number(o.base_stake_pct||8),max_stake_pct:Number(o.max_stake_pct||100),ladder:o.ladder};
+  var t=[],out=[];
+  for(var i=0;i<5;i++){var r=stakeFor(s,t);out.push(r);var cap=curCap(s,t);t.push({result:'loss',stake_amount:r.amount,capital_after:cap-r.amount});}
+  return out;
+}
+
+function modelName(m){return m==='masaniello'?'Masaniello':(m==='ladder'?'Fixed ladder':'Tatura - peak recovery');}
+
+function nav(){
+  var it=[['session','Session'],['journal','Journal'],['portfolio','Portfolio'],['profile','Profile']];
+  if(S.user&&S.user.role==='admin')it.push(['admin','Admin']);
+  document.getElementById('nav').innerHTML=it.map(function(x){
+    return '<a href="#'+x[0]+'" class="'+(S.view===x[0]?'on':'')+'">'+x[1]+'</a>';
+  }).join('')+(S.user?'<a href="#" onclick="doLogout();return false;" style="float:right;opacity:.6">Sign out</a>':'');
+}
+function head(r){return '<div class="hdr"><div class="brand">Tatura <b>Model</b></div>'+(r||'')+'</div>';}
+
+function render(){
+  nav();
+  var a=document.getElementById('app');
+  if(S.view==='session')a.innerHTML=vSession();
+  else if(S.view==='journal')a.innerHTML=vJournal();
+  else if(S.view==='portfolio')a.innerHTML=vPortfolio();
+  else if(S.view==='admin')a.innerHTML=vAdmin();
+  else a.innerHTML=vProfile();
+  window.scrollTo(0,0);
+}
+function vSession(){
+  if(!S.active){
+    var st=S.settings||{},pv=preview(st);
+    return head('<span class="pill">idle</span>')+
+      '<div class="card"><h3>Ready to start</h3>'+
+      '<div class="row"><span>Model</span><b>'+modelName(modelOf(st))+'</b></div>'+
+      '<div class="row"><span>Total capital</span><b>'+money(st.total_capital)+'</b></div>'+
+      '<div class="row"><span>Base stake</span><b>'+num(st.base_stake_pct)+'%</b></div>'+
+      '<div class="row"><span>Total trades</span><b>'+num(st.total_trades)+'</b></div>'+
+      '<div class="row"><span>Expected wins</span><b>'+num(st.expected_wins)+'</b></div>'+
+      '<div class="row"><span>Loss limit</span><b>'+num(st.loss_limit)+' losses</b></div>'+
+      '<div class="row"><span>Payout</span><b>'+num(st.payout_pct)+'%</b></div>'+
+      '<div class="row"><span>Opening stakes</span><b>'+pv.map(function(p){return Math.round(p.pct)+'%';}).join(' / ')+'</b></div>'+
+      '<div style="margin-top:18px"><button class="btn primary full" onclick="startSession()">Start session</button></div>'+
+      '<div class="hint" style="text-align:center">Change these in Profile before starting.</div></div>';
+  }
+  var s=S.active,t=S.trades,x=tally(t),cap=curCap(s,t),nx=stakeFor(s,t);
+  var pnl=cap-Number(s.start_capital),done=t.length,total=Number(s.total_trades);
+  var below=cap<Number(s.start_capital),pv=preview(s);
+  var lad=pv.map(function(p,i){return '<i class="'+(i===0?'on':'')+'">'+Math.round(p.pct)+'%</i>';}).join('');
+  var prog=Math.min(100,done/total*100);
+  var pill=nx.mode==='recovery'?'<span class="pill rec">recovery</span>':'<span class="pill live">live</span>';
+  return head(pill)+
+    '<div class="card"><div class="stage"><div class="lbl">Next trade stake</div>'+
+    '<div class="big">'+Math.round(nx.pct)+'<small>%</small></div>'+
+    '<div class="sub">approx <b>'+money(nx.amount)+'</b> of <b>'+money(cap)+'</b></div>'+
+    '<div class="lad">'+lad+'</div>'+
+    (nx.capped?'<div class="warn">Capped at '+num(s.max_stake_pct)+'% of capital</div>':'')+
+    '</div><div class="acts">'+
+    '<button class="btn win" onclick="record(1)">Win</button>'+
+    '<button class="btn loss" onclick="record(0)">Loss</button></div>'+
+    '<div class="track"><i style="width:'+prog+'%"></i></div>'+
+    '<div class="sub" style="text-align:center">'+(pnl>=0?'+':'')+money(pnl)+' &middot; '+done+'/'+total+' trades</div></div>'+
+    '<div class="g2">'+
+    '<div class="st"><div class="k">Capital</div><div class="v '+(pnl>=0?'win':'loss')+'">'+money(cap)+'</div></div>'+
+    '<div class="st"><div class="k">P / L</div><div class="v '+(pnl>=0?'win':'loss')+'">'+(pnl>=0?'+':'')+money(pnl)+'</div></div>'+
+    '<div class="st"><div class="k">Wins</div><div class="v win">'+x.wins+' / '+s.expected_wins+'</div></div>'+
+    '<div class="st"><div class="k">Losses</div><div class="v loss">'+x.losses+' / '+s.loss_limit+'</div></div></div>'+
+    (below?'<div class="card" style="padding:14px 18px"><div class="hint" style="margin:0">Below starting capital - recovery staking active. A win back to '+money(s.start_capital)+' resets the stake to '+num(s.base_stake_pct)+'%.</div></div>':'')+
+    '<div class="card"><h3>Session log</h3>'+
+    (t.length?t.slice().reverse().map(function(r){
+      return '<div class="tr"><span class="n">'+r.seq+'</span><span class="p">'+Math.round(r.stake_pct)+'% &middot; '+money(r.stake_amount)+'</span><span class="tag '+r.result+'">'+r.result+'</span></div>';
+    }).join(''):'<div class="empty">No trades yet.</div>')+
+    '<div style="margin-top:16px"><button class="btn ghost full" onclick="endManual()">End session</button></div></div>';
+}
+
+function vJournal(){
+  var list=S.sessions.slice().sort(function(a,b){return b.id-a.id;});
+  if(!list.length)return head('')+'<div class="card"><div class="empty">No sessions yet.<br>Start one from the Session tab.</div></div>';
+  return head('<span class="pill">'+list.length+' sessions</span>')+list.map(function(s){
+    var open=!!S.open[s.id];
+    var st=Number(s.start_capital),en=s.end_capital==null?st:Number(s.end_capital),p=en-st;
+    var cls=s.status==='active'?'open':(p>=0?'win':'loss');
+    var lab=s.status==='active'?'open':(p>=0?'profit':'loss');
+    var d=new Date(s.started_at);
+    return '<div class="sess"><div class="sh" onclick="toggle('+s.id+')">'+
+      '<div><div class="d">'+d.toLocaleDateString()+' '+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</div>'+
+      '<div class="m">'+s.wins+'W / '+s.losses+'L &middot; '+(s.wins+s.losses)+' trades</div></div>'+
+      '<div><div class="p">'+(p>=0?'+':'')+money(p)+'</div><div style="text-align:right;margin-top:3px"><span class="tag '+cls+'">'+lab+'</span></div></div>'+
+      '</div>'+(open?'<div class="sb" id="sb-'+s.id+'">'+body(s)+'</div>':'')+'</div>';
+  }).join('');
+}
+
+function body(s){
+  var st=Number(s.start_capital),en=s.end_capital==null?st:Number(s.end_capital);
+  return '<div class="row"><span>Capital in</span><b>'+money(st)+'</b></div>'+
+    '<div class="row"><span>Capital out</span><b>'+money(en)+'</b></div>'+
+    '<div class="row"><span>Model</span><b>'+modelName(modelOf(s))+'</b></div>'+
+    '<div class="row"><span>Base stake</span><b>'+num(s.base_stake_pct)+'%</b></div>'+
+    '<div class="row"><span>Loss limit</span><b>'+s.loss_limit+' losses</b></div>'+
+    (s.note?'<div class="row"><span>Reason</span><b style="font-weight:400;text-align:right;max-width:60%">'+esc(s.note)+'</b></div>':'')+
+    '<div style="display:flex;gap:8px;margin-top:14px">'+
+    '<button class="btn ghost" style="flex:1" onclick="editSession('+s.id+')">Edit</button>'+
+    '<button class="btn ghost" style="flex:1" onclick="delSession('+s.id+')">Delete</button></div>'+
+    '<div id="tr-'+s.id+'" style="margin-top:10px"><div class="empty">Loading...</div></div>';
+}
+
+function toggle(id){S.open[id]=!S.open[id];render();if(S.open[id])loadTrades(id);}
+function loadTrades(id){
+  var box=document.getElementById('tr-'+id);if(!box)return;
+  api('/sessions/'+id).then(function(r){
+    box.innerHTML=r.trades.length?r.trades.map(function(t){
+      return '<div class="tr"><span class="n">'+t.seq+'</span><span class="p">'+Math.round(t.stake_pct)+'% &middot; '+money(t.stake_amount)+'</span>'+
+        '<span class="tag '+t.result+'">'+t.result+'</span><button class="x" onclick="delTrade('+t.id+','+id+')">x</button></div>';
+    }).join(''):'<div class="empty">No trades.</div>';
+  }).catch(function(){box.innerHTML='<div class="empty">Could not load trades.</div>';});
+}
+function delTrade(tid,sid){
+  if(!confirm('Delete this trade?'))return;
+  api('/trades/'+tid,{method:'DELETE'}).then(function(){return loadSessions();}).then(function(){return loadActive();}).then(function(){render();loadTrades(sid);}).catch(function(e){toast(e.message);});
+}
+function editSession(id){
+  var s=S.sessions.filter(function(x){return x.id===id;})[0];if(!s)return;
+  var a=prompt('Confirm total capital put in:',s.start_capital);if(a===null)return;
+  var b=prompt('Confirm capital after the session:',s.end_capital==null?s.start_capital:s.end_capital);if(b===null)return;
+  api('/sessions/'+id,{method:'PATCH',body:JSON.stringify({start_capital:Number(a),end_capital:Number(b)})})
+    .then(function(){return loadSessions();}).then(render).catch(function(e){toast(e.message);});
+}
+function delSession(id){
+  if(!confirm('Delete this session and its trades?'))return;
+  api('/sessions/'+id,{method:'DELETE'}).then(function(){return loadSessions();}).then(function(){return loadActive();}).then(render).catch(function(e){toast(e.message);});
+}
+
+function vPortfolio(){
+  var l=S.sessions,w=0,ls=0,a=0,b=0;
+  l.forEach(function(s){w+=s.wins;ls+=s.losses;a+=Number(s.start_capital);b+=Number(s.end_capital==null?s.start_capital:s.end_capital);});
+  var net=b-a,rate=(w+ls)?Math.round(w/(w+ls)*100):0;
+  return head('<span class="pill">'+l.length+' total</span>')+
+    '<div class="g2">'+
+    '<div class="st"><div class="k">Sessions</div><div class="v">'+l.length+'</div></div>'+
+    '<div class="st"><div class="k">Trades</div><div class="v">'+(w+ls)+'</div></div>'+
+    '<div class="st"><div class="k">Wins</div><div class="v win">'+w+'</div></div>'+
+    '<div class="st"><div class="k">Losses</div><div class="v loss">'+ls+'</div></div>'+
+    '<div class="st"><div class="k">Win rate</div><div class="v gold">'+rate+'%</div></div>'+
+    '<div class="st"><div class="k">Net</div><div class="v '+(net>=0?'win':'loss')+'">'+(net>=0?'+':'')+money(net)+'</div></div></div>'+
+    '<div class="card"><h3>Capital record</h3>'+
+    '<div class="row"><span>Capital committed</span><b>'+money(a)+'</b></div>'+
+    '<div class="row"><span>Capital at end</span><b>'+money(b)+'</b></div>'+
+    '<div class="row"><span>Return</span><b>'+(a?((net/a)*100).toFixed(1):'0.0')+'%</b></div></div>'+
+    '<div class="card"><h3>Session history</h3>'+
+    (l.length?l.slice().sort(function(x,y){return y.id-x.id;}).map(function(s){
+      var st=Number(s.start_capital),en=Number(s.end_capital==null?s.start_capital:s.end_capital),p=en-st;
+      return '<div class="row"><span>'+new Date(s.started_at).toLocaleDateString()+' &middot; '+s.wins+'W/'+s.losses+'L</span>'+
+        '<b class="'+(p>=0?'win':'loss')+'">'+(p>=0?'+':'')+money(p)+'</b></div>';
+    }).join(''):'<div class="empty">No data yet.</div>')+'</div>';
+}
+
+function vProfile(){
+  var st=S.settings||{},m=modelOf(st),pv=preview(st);
+  return head('<span class="pill">controller</span>')+
+    '<div class="card"><h3>Session controller</h3>'+
+    '<label>Money management model</label>'+
+    '<select id="f-model" onchange="toggleFields()">'+
+    '<option value="tatura"'+(m==='tatura'?' selected':'')+'>Tatura - compound + recovery</option>'+
+    '<option value="masaniello"'+(m==='masaniello'?' selected':'')+'>Masaniello</option>'+
+    '<option value="ladder"'+(m==='ladder'?' selected':'')+'>Fixed ladder</option></select>'+
+    '<label>Total capital to put</label><input id="f-cap" type="number" step="0.01" value="'+(st.total_capital||0)+'">'+
+    '<label>Base stake (% of capital)</label><input id="f-base" type="number" step="0.1" value="'+(st.base_stake_pct||8)+'">'+
+    '<label>Total trades to take</label><input id="f-trades" type="number" value="'+(st.total_trades||0)+'">'+
+    '<label>Expected wins</label><input id="f-wins" type="number" value="'+(st.expected_wins||0)+'">'+
+    '<label>Loss limit (session terminates)</label><input id="f-limit" type="number" value="'+(st.loss_limit||3)+'">'+
+    '<div class="hint">Total losses in the session, not consecutive. The session ends and is saved to the journal.</div>'+
+    '<label>Payout per win (%)</label><input id="f-payout" type="number" step="0.1" value="'+(st.payout_pct||80)+'">'+
+    '<div id="mas" style="display:'+(m==='masaniello'?'block':'none')+'">'+
+    '<label>Profit target (% of capital)</label><input id="f-target" type="number" step="0.1" value="'+(st.target_profit_pct||30)+'"></div>'+
+    '<div id="lad" style="display:'+(m==='ladder'?'block':'none')+'">'+
+    '<label>Stake ladder (comma separated)</label><input id="f-ladder" type="text" value="'+ladderOf(st).join(', ')+'"></div>'+
+    '<label>Max stake cap (% of capital)</label><input id="f-max" type="number" value="'+(st.max_stake_pct||100)+'">'+
+    '<div style="margin-top:18px"><button class="btn primary full" onclick="saveSettings()">Save controller</button></div></div>'+
+    '<div class="card"><h3>Stake preview (5 losses)</h3>'+
+    pv.map(function(p,i){return '<div class="row"><span>Trade '+(i+1)+'</span><b>'+Math.round(p.pct)+'% &middot; '+money(p.amount)+'</b></div>';}).join('')+
+    '<div class="hint">What the session screen shows if every trade loses. Recovery stakes climb fast - set a max stake cap.</div></div>';
+}
+
+function toggleFields(){
+  var m=document.getElementById('f-model').value;
+  document.getElementById('mas').style.display=m==='masaniello'?'block':'none';
+  document.getElementById('lad').style.display=m==='ladder'?'block':'none';
+}
+
+function saveSettings(){
+  var el=document.getElementById('f-ladder');
+  var lad=el?el.value.split(',').map(function(x){return Number(x.trim());}).filter(function(x){return !isNaN(x)&&x>0;}):[];
+  if(!lad.length)lad=[7,12,18,26,36,48];
+  var b={model:document.getElementById('f-model').value,
+    total_capital:Number(document.getElementById('f-cap').value),
+    base_stake_pct:Number(document.getElementById('f-base').value),
+    total_trades:Number(document.getElementById('f-trades').value),
+    expected_wins:Number(document.getElementById('f-wins').value),
+    loss_limit:Number(document.getElementById('f-limit').value),
+    payout_pct:Number(document.getElementById('f-payout').value),
+    target_profit_pct:Number(document.getElementById('f-target').value),
+    max_stake_pct:Number(document.getElementById('f-max').value),
+    ladder:JSON.stringify(lad)};
+  api('/settings',{method:'PUT',body:JSON.stringify(b)}).then(function(r){S.settings=r;render();toast('Saved');}).catch(function(e){toast(e.message);});
+}
+
+function loadSettings(){return api('/settings').then(function(r){S.settings=r;});}
+function loadSessions(){return api('/sessions').then(function(r){S.sessions=r;});}
+function loadActive(){
+  var o=S.sessions.filter(function(s){return s.status==='active';});
+  if(!o.length){S.active=null;S.trades=[];return Promise.resolve();}
+  return api('/sessions/'+o[0].id).then(function(r){S.active=r.session;S.trades=r.trades;});
+}
+
+function startSession(){
+  if(S.busy)return;S.busy=true;
+  var st=S.settings;
+  api('/sessions',{method:'POST',body:JSON.stringify({
+    model:modelOf(st),start_capital:Number(st.total_capital),total_trades:Number(st.total_trades),
+    expected_wins:Number(st.expected_wins),loss_limit:Number(st.loss_limit),payout_pct:Number(st.payout_pct),
+    base_stake_pct:Number(st.base_stake_pct),target_profit_pct:Number(st.target_profit_pct),
+    max_stake_pct:Number(st.max_stake_pct),ladder:JSON.stringify(ladderOf(st))})})
+  .then(function(){return loadSessions();}).then(loadActive).then(function(){S.busy=false;render();})
+  .catch(function(e){S.busy=false;toast(e.message);});
+}
+
+function record(win){
+  if(S.busy||!S.active)return;S.busy=true;
+  var s=S.active,t=S.trades,nx=stakeFor(s,t),cap=curCap(s,t);
+  var after=win?cap+nx.amount*(Number(s.payout_pct)/100):cap-nx.amount;
+  api('/sessions/'+s.id+'/trades',{method:'POST',body:JSON.stringify({
+    seq:t.length+1,stake_pct:nx.pct,stake_amount:nx.amount,
+    result:win?'win':'loss',capital_after:after})})
+  .then(function(){return loadSessions();}).then(loadActive).then(function(){
+    var r=stopReason(S.active,S.trades);
+    S.busy=false;
+    if(r)endSession(r);else render();
+  }).catch(function(e){S.busy=false;toast(e.message);});
+}
+
+function endManual(){endSession('Ended manually');}
+
+function endSession(reason){
+  if(!S.active)return;
+  var cap=curCap(S.active,S.trades);
+  api('/sessions/'+S.active.id,{method:'PATCH',body:JSON.stringify({
+    status:'ended',end_capital:cap,ended_at:new Date().toISOString(),note:reason})})
+  .then(function(){return loadSessions();}).then(loadActive).then(function(){render();toast(reason+' Saved to journal.');})
+  .catch(function(e){toast(e.message);});
+}
+
+function route(){
+  var v=(location.hash||'#session').slice(1);
+  if(['session','journal','portfolio','profile','admin'].indexOf(v)<0)v='session';
+  S.view=v;
+  if(v==='admin'&&S.user&&S.user.role==='admin'){loadAdmin();return;}
+  render();
+}
+
+function doLogout(){
+  api('/auth/logout',{method:'POST'}).then(function(){S.user=null;S.settings=null;S.sessions=[];S.active=null;S.trades=[];showLogin('Signed out.');}).catch(function(){showLogin('Signed out.');});
+}
+function showLogin(msg){
+  document.getElementById('nav').innerHTML='';
+  document.getElementById('app').innerHTML='<div class="card" style="max-width:380px;margin:40px auto">'+
+    '<h3>Sign in</h3>'+
+    '<label>Username</label><input id="lg-u" autocomplete="username">'+
+    '<label>Password</label><input id="lg-p" type="password" autocomplete="current-password">'+
+    '<div id="lg-e" class="hint" style="color:#ef4444;min-height:18px">'+(msg||'')+'</div>'+
+    '<div style="margin-top:14px"><button class="btn primary full" onclick="doLogin()">Sign in</button></div></div>';
+  var p=document.getElementById('lg-p');
+  if(p)p.addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+}
+function doLogin(){
+  var u=document.getElementById('lg-u').value.trim(),p=document.getElementById('lg-p').value;
+  api('/auth/login',{method:'POST',body:JSON.stringify({username:u,password:p})})
+    .then(function(r){S.user=r.user;return loadSettings();})
+    .then(loadSessions).then(loadActive)
+    .then(function(){location.hash='#session';route();})
+    .catch(function(e){var el=document.getElementById('lg-e');if(el)el.textContent=e.message;});
+}
+function loadAdmin(){return api('/admin/users').then(function(r){S.adminUsers=r;return api('/admin/bot');}).then(function(b){S.bot=b;render();});}
+function botRefresh(){return api('/admin/bot').then(function(b){S.bot=b;render();});}
+function botToggle(){var on=S.bot&&S.bot.enabled?0:1;api('/admin/bot',{method:'POST',body:JSON.stringify({enabled:on})}).then(function(b){S.bot=b;render();toast(on?'Bot ON':'Bot OFF');}).catch(function(e){toast(e.message);});}
+function botSave(){
+  var g=function(id,d){var el=document.getElementById(id);if(!el)return d;if(String(el.value).trim()==='')return d;var v=Number(el.value);return isFinite(v)?v:d;};
+  var b={
+    total_capital:g('bp-cap',0),base_stake_pct:g('bp-base',7),total_trades:g('bp-trades',0),
+    expected_wins:g('bp-wins',0),loss_limit:g('bp-loss',0),payout_pct:g('bp-payout',80),
+    max_stake_pct:g('bp-max',100),session_budget:g('bp-budget',0),
+    max_sessions_per_day:g('bp-sessions',0),daily_max_loss:g('bp-dml',0)
+  };
+  api('/admin/bot',{method:'POST',body:JSON.stringify(b)}).then(function(r){S.bot=r;render();toast('Bot settings saved');}).catch(function(e){toast(e.message);});
+}
+function botPanel(){
+  var b=S.bot||{},c=b.settings||{},s=b.active_session,lt=b.last_trade;
+  var seen=b.last_seen?Math.round((Date.now()-new Date(b.last_seen).getTime())/1000)+' sec ago':'never';
+  var f=function(id,label,val,step){return '<label>'+label+'</label><input id="'+id+'" type="number" step="'+(step||1)+'" value="'+(val==null?0:val)+'">';};
+  var rows='';
+  rows+='<div class="row"><span>Bot</span><b class="'+(b.enabled?'win':'loss')+'">'+(b.enabled?'ON':'OFF')+'</b></div>';
+  rows+='<div class="row"><span>Windows app</span><b class="'+(b.connected?'win':'loss')+'">'+(b.connected?'connected':'disconnected')+'</b></div>';
+  rows+='<div class="row"><span>Last heartbeat</span><b>'+seen+'</b></div>';
+  rows+='<div class="row"><span>Today P/L</span><b class="'+((b.day_pnl||0)>=0?'win':'loss')+'">'+money(b.day_pnl)+'</b></div>';
+  if(s){
+    rows+='<div class="row"><span>Active session</span><b>#'+s.id+'</b></div>';
+    rows+='<div class="row"><span>Trades</span><b>'+s.trades+(s.remaining_trades!=null?' &middot; '+s.remaining_trades+' left':'')+'</b></div>';
+    rows+='<div class="row"><span>Wins / Losses</span><b>'+s.wins+' / '+s.losses+'</b></div>';
+    rows+='<div class="row"><span>Session capital</span><b>'+money(s.capital)+'</b></div>';
+    if(s.budget>0)rows+='<div class="row"><span>Budget used</span><b>'+money(s.budget_used)+' / '+money(s.budget)+'</b></div>';
+  }else{
+    rows+='<div class="row"><span>Active session</span><b>none</b></div>';
+  }
+  if(lt)rows+='<div class="row"><span>Last trade</span><b>'+(lt.market||'-')+' '+(lt.direction||'')+' &middot; '+(lt.result||'-')+'</b></div>';
+  return '<div class="card"><h3>Trading bot status</h3>'+rows+
+    '<div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">'+
+    '<button class="btn primary" onclick="botToggle()">'+(b.enabled?'Switch OFF':'Switch ON')+'</button>'+
+    '<button class="btn ghost" onclick="botRefresh()">Refresh</button></div></div>'+
+    '<div class="card"><h3>Trading bot settings</h3>'+
+    f('bp-cap','Starting capital per session',c.total_capital,'0.01')+
+    f('bp-base','Base risk (% of capital)',c.base_stake_pct,'0.1')+
+    f('bp-trades','Maximum trades per session',c.total_trades)+
+    f('bp-wins','Expected wins (hard stop)',c.expected_wins)+
+    f('bp-loss','Stop after total losses',c.loss_limit)+
+    f('bp-payout','Payout per win (%)',c.payout_pct,'0.1')+
+    f('bp-max','Max stake cap (% of capital)',c.max_stake_pct,'0.1')+
+    f('bp-budget','Session trading budget (0 = unlimited)',b.session_budget,'0.01')+
+    f('bp-sessions','Max sessions per day (0 = unlimited)',b.max_sessions_per_day)+
+    f('bp-dml','Daily max loss (0 = unlimited)',b.daily_max_loss,'0.01')+
+    '<div class="hint">These are the same values the Session tab uses. Save here, then press Start session on the Session tab. 0 means unlimited.</div>'+
+    '<div style="margin-top:14px"><button class="btn primary full" onclick="botSave()">Save bot settings</button></div></div>';
+}
+function admOut(h){var el=document.getElementById('adm-out');if(el)el.innerHTML=h;}
+function adminCreate(){
+  var n=prompt('Display name for the new user:','');
+  if(n===null)return;
+  api('/admin/users',{method:'POST',body:JSON.stringify({display_name:n})}).then(function(r){
+    admOut('<div class="card" style="background:#0b1220"><b>New user created</b><div class="row"><span>Username</span><b>'+esc(r.username)+'</b></div><div class="row"><span>Password</span><b>'+esc(r.password)+'</b></div><div class="hint">Share these once - the password is not shown again.</div></div>');
+    loadAdmin();
+  }).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function adminEdit(id){
+  var u=(S.adminUsers||[]).filter(function(x){return x.id===id;})[0];if(!u)return;
+  var n=prompt('Display name:',u.display_name||'');
+  if(n===null)return;
+  api('/admin/users/'+id,{method:'PATCH',body:JSON.stringify({display_name:n})}).then(loadAdmin).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function adminToggle(id){
+  var u=(S.adminUsers||[]).filter(function(x){return x.id===id;})[0];if(!u)return;
+  api('/admin/users/'+id,{method:'PATCH',body:JSON.stringify({active:u.active?0:1})}).then(loadAdmin).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function adminPass(id){
+  if(!confirm('Generate a new password for this user?'))return;
+  api('/admin/users/'+id+'/password',{method:'POST'}).then(function(r){
+    admOut('<div class="card" style="background:#0b1220"><b>New password</b><div class="row"><span>Password</span><b>'+esc(r.password)+'</b></div></div>');
+  }).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function adminReset(id){
+  var c=prompt('Reset this user: all sessions and trades are deleted. New starting capital:','1000');
+  if(c===null)return;
+  api('/admin/users/'+id+'/reset',{method:'POST',body:JSON.stringify({capital:Number(c)})}).then(function(){admOut('<span style="color:#22c55e">Capital reset.</span>');loadAdmin();}).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function adminDel(id){
+  if(!confirm('Delete this user and all of their data?'))return;
+  api('/admin/users/'+id,{method:'DELETE'}).then(loadAdmin).catch(function(e){admOut('<span style="color:#ef4444">'+esc(e.message)+'</span>');});
+}
+function vAdmin(){
+  var us=S.adminUsers||[];
+  var rows=us.map(function(u){
+    return '<div class="row"><span>'+esc(u.username)+(u.display_name?' <span class="hint" style="display:inline">'+esc(u.display_name)+'</span>':'')+(u.role==='admin'?' <span class="pill">admin</span>':'')+(u.active?'':' <span class="pill">disabled</span>')+'</span>'+
+      '<b>'+u.sessions+' sess &middot; '+u.wins+'W/'+u.losses+'L &middot; '+money(u.net)+'</b></div>'+
+      '<div style="display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap">'+
+      '<button class="btn" onclick="adminEdit('+u.id+')">Rename</button>'+
+      '<button class="btn" onclick="adminToggle('+u.id+')">'+(u.active?'Disable':'Enable')+'</button>'+
+      '<button class="btn" onclick="adminPass('+u.id+')">New password</button>'+
+      '<button class="btn" onclick="adminReset('+u.id+')">Reset capital</button>'+
+      '<button class="btn" onclick="adminDel('+u.id+')">Delete</button></div>';
+  }).join('');
+  return head('<span class="pill">admin</span>')+
+    botPanel()+'<div class="card"><h3>Users</h3>'+
+    '<button class="btn primary" onclick="adminCreate()">Create user</button>'+
+    '<div id="adm-out" style="margin-top:12px"></div>'+
+    (rows||'<div class="empty">No users yet.</div>')+'</div>';
+}
+
+window.onerror=function(m,s,l,c){
+  var a=document.getElementById('app');
+  if(a)a.innerHTML='<div class="card" style="margin-top:40px"><h3>Script error</h3><div class="hint" style="color:#ef4444">'+m+' line '+l+':'+c+'</div></div>';
+};
+
+var DEFERRED=null;
+window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();DEFERRED=e;var b=document.getElementById('installBtn');if(b)b.style.display='block';});
+window.addEventListener('appinstalled',function(){DEFERRED=null;var b=document.getElementById('installBtn');if(b)b.style.display='none';});
+function doInstall(){
+  if(!DEFERRED){toast('Open your browser menu and choose Add to Home screen.');return;}
+  DEFERRED.prompt();
+  DEFERRED.userChoice.then(function(){DEFERRED=null;var b=document.getElementById('installBtn');if(b)b.style.display='none';});
+}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').catch(function(){});}
+window.addEventListener('hashchange',route);
+api('/auth/me').then(function(r){S.user=r.user;return Promise.all([loadSettings(),loadSessions()]);})
+  .then(loadActive).then(route)
+  .catch(function(e){
+    if(e.message==='Not signed in'){showLogin();return;}
+    document.getElementById('app').innerHTML='<div class="card"><div class="empty">Could not reach the API.<br>'+esc(e.message)+'</div></div>';
+  });
+</script>
+</body>
+</html>`;
+function json(d, s) {
+  return new Response(JSON.stringify(d), {
+    status: s || 200,
+    headers: { 'content-type': 'application/json;charset=utf-8', 'cache-control': 'no-store' }
+  });
+}
+
+let ready = false;
+
+async function schema(db) {
+  if (ready) return;
+  await db.batch([
+    db.prepare("CREATE TABLE IF NOT EXISTS settings (id INTEGER PRIMARY KEY CHECK (id=1), model TEXT NOT NULL DEFAULT 'tatura', total_capital REAL NOT NULL DEFAULT 1000, base_stake_pct REAL NOT NULL DEFAULT 8, total_trades INTEGER NOT NULL DEFAULT 5, expected_wins INTEGER NOT NULL DEFAULT 3, loss_limit INTEGER NOT NULL DEFAULT 3, payout_pct REAL NOT NULL DEFAULT 80, target_profit_pct REAL NOT NULL DEFAULT 30, max_stake_pct REAL NOT NULL DEFAULT 100, ladder TEXT NOT NULL DEFAULT '[7,12,18,26,36,48]')"),
+    db.prepare("CREATE TABLE IF NOT EXISTS sessions (id INTEGER PRIMARY KEY AUTOINCREMENT, started_at TEXT NOT NULL, ended_at TEXT, model TEXT NOT NULL DEFAULT 'tatura', start_capital REAL NOT NULL, end_capital REAL, base_stake_pct REAL NOT NULL DEFAULT 8, total_trades INTEGER NOT NULL, expected_wins INTEGER NOT NULL, loss_limit INTEGER NOT NULL DEFAULT 3, payout_pct REAL NOT NULL, target_profit_pct REAL NOT NULL DEFAULT 30, max_stake_pct REAL NOT NULL DEFAULT 100, ladder TEXT NOT NULL, wins INTEGER NOT NULL DEFAULT 0, losses INTEGER NOT NULL DEFAULT 0, status TEXT NOT NULL DEFAULT 'active', note TEXT)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS trades (id INTEGER PRIMARY KEY AUTOINCREMENT, session_id INTEGER NOT NULL, seq INTEGER NOT NULL, stake_pct REAL NOT NULL, stake_amount REAL NOT NULL, result TEXT NOT NULL, capital_after REAL NOT NULL, created_at TEXT NOT NULL)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_trades_session ON trades(session_id)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT NOT NULL UNIQUE, pass_hash TEXT NOT NULL, salt TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'user', display_name TEXT, active INTEGER NOT NULL DEFAULT 1, created_at TEXT NOT NULL)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS auth_tokens (token TEXT PRIMARY KEY, user_id INTEGER NOT NULL, created_at TEXT NOT NULL, expires_at TEXT NOT NULL)"),
+        db.prepare("CREATE INDEX IF NOT EXISTS idx_tokens_user ON auth_tokens(user_id)"),
+    db.prepare("CREATE TABLE IF NOT EXISTS bot_control (user_id INTEGER PRIMARY KEY, enabled INTEGER NOT NULL DEFAULT 0, daily_max_loss REAL NOT NULL DEFAULT 0, last_seen TEXT, last_note TEXT)")
+  ]);
+
+  // ---- bot settings migrations (additive, safe) ----
+  async function addCol(tbl, c, d) {
+    const info = await db.prepare('PRAGMA table_info(' + tbl + ')').all();
+    const has = (info.results || []).some(function (x) { return x.name === c; });
+    if (!has) await db.prepare('ALTER TABLE ' + tbl + ' ADD COLUMN ' + c + ' ' + d).run();
+  }
+  await addCol('bot_control', 'session_budget', 'REAL NOT NULL DEFAULT 0');
+  await addCol('bot_control', 'max_sessions_per_day', 'INTEGER NOT NULL DEFAULT 0');
+  await addCol('sessions', 'breakeven', 'INTEGER NOT NULL DEFAULT 0');
+  await addCol('trades', 'status', "TEXT NOT NULL DEFAULT 'closed'");
+  await addCol('trades', 'market', 'TEXT');
+  await addCol('trades', 'direction', 'TEXT');
+  await addCol('trades', 'ticket', 'TEXT');
+  await addCol('trades', 'lot', 'REAL');
+  await addCol('trades', 'entry_price', 'REAL');
+  await addCol('trades', 'exit_price', 'REAL');
+  await addCol('trades', 'sl', 'REAL');
+  await addCol('trades', 'tp', 'REAL');
+  await addCol('trades', 'executed_at', 'TEXT');
+  await addCol('trades', 'exec_status', 'TEXT');
+  await addCol('trades', 'profit', 'REAL');
+  await addCol('trades', 'closed_at', 'TEXT');
+  await db.prepare('CREATE INDEX IF NOT EXISTS idx_trades_ticket ON trades(ticket)').run();
+  const sInfo = await db.prepare("PRAGMA table_info(settings)").all();
+  const sHasUser = (sInfo.results || []).some(function (c) { return c.name === 'user_id'; });
+  if (!sHasUser) {
+    await db.batch([
+      db.prepare("CREATE TABLE settings_new (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER UNIQUE, model TEXT NOT NULL DEFAULT 'tatura', total_capital REAL NOT NULL DEFAULT 1000, base_stake_pct REAL NOT NULL DEFAULT 8, total_trades INTEGER NOT NULL DEFAULT 5, expected_wins INTEGER NOT NULL DEFAULT 3, loss_limit INTEGER NOT NULL DEFAULT 3, payout_pct REAL NOT NULL DEFAULT 80, target_profit_pct REAL NOT NULL DEFAULT 30, max_stake_pct REAL NOT NULL DEFAULT 100, ladder TEXT NOT NULL DEFAULT '[7,12,18,26,36,48]')"),
+      db.prepare("INSERT INTO settings_new (user_id,model,total_capital,base_stake_pct,total_trades,expected_wins,loss_limit,payout_pct,target_profit_pct,max_stake_pct,ladder) SELECT 1,model,total_capital,base_stake_pct,total_trades,expected_wins,loss_limit,payout_pct,target_profit_pct,max_stake_pct,ladder FROM settings"),
+      db.prepare("DROP TABLE settings"),
+      db.prepare("ALTER TABLE settings_new RENAME TO settings")
+    ]);
+  }
+  const tInfo = await db.prepare("PRAGMA table_info(sessions)").all();
+  const tHasUser = (tInfo.results || []).some(function (c) { return c.name === 'user_id'; });
+  if (!tHasUser) {
+    await db.batch([
+      db.prepare("ALTER TABLE sessions ADD COLUMN user_id INTEGER"),
+      db.prepare("UPDATE sessions SET user_id=1 WHERE user_id IS NULL"),
+      db.prepare("CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)")
+    ]);
+  }
+  ready = true;
+}
+
+const ENC = new TextEncoder();
+function b64(buf) { let out = ''; const b = new Uint8Array(buf); for (let i = 0; i < b.length; i++) out += String.fromCharCode(b[i]); return btoa(out); }
+async function hashPass(pw, salt) {
+  const key = await crypto.subtle.importKey('raw', ENC.encode(pw), { name: 'PBKDF2' }, false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt: ENC.encode(salt), iterations: 100000, hash: 'SHA-256' }, key, 256);
+  return b64(bits);
+}
+function randHex(n) { const a = new Uint8Array(n); crypto.getRandomValues(a); let o = ''; for (let i = 0; i < a.length; i++) o += ('0' + a[i].toString(16)).slice(-2); return o; }
+function randPass(len) {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789';
+  const a = new Uint8Array(len || 12); crypto.getRandomValues(a); let o = '';
+  for (let i = 0; i < a.length; i++) o += chars[a[i] % chars.length];
+  return o;
+}
+function randUser() {
+  const chars = 'abcdefghijkmnpqrstuvwxyz23456789';
+  const a = new Uint8Array(8); crypto.getRandomValues(a); let o = 'u';
+  for (let i = 0; i < a.length; i++) o += chars[a[i] % chars.length];
+  return o;
+}
+function getCookie(req, name) {
+  const h = req.headers.get('Cookie') || '';
+  const parts = h.split(';');
+  for (let i = 0; i < parts.length; i++) {
+    const p = parts[i].trim();
+    const eq = p.indexOf('=');
+    if (eq > -1 && p.slice(0, eq) === name) return decodeURIComponent(p.slice(eq + 1));
+  }
+  return null;
+}
+async function currentUser(req, db) {
+  const t = getCookie(req, 'tt_session');
+  if (!t) return null;
+  const row = await db.prepare("SELECT u.id,u.username,u.role,u.display_name,u.active FROM auth_tokens a JOIN users u ON u.id=a.user_id WHERE a.token=? AND a.expires_at>?").bind(t, new Date().toISOString()).first();
+  if (!row || !row.active) return null;
+  return row;
+}
+async function getSettings(db, uid) {
+  let r = await db.prepare('SELECT * FROM settings WHERE user_id=?').bind(uid).first();
+  if (!r) {
+    await db.prepare("INSERT INTO settings (user_id,model,total_capital,base_stake_pct,total_trades,expected_wins,loss_limit,payout_pct,target_profit_pct,max_stake_pct,ladder) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
+      .bind(uid, 'tatura', 1000, 8, 5, 3, 3, 80, 30, 100, '[7,12,18,26,36,48]').run();
+    r = await db.prepare('SELECT * FROM settings WHERE user_id=?').bind(uid).first();
+  }
+  return r;
+}
+
+// ===== BOT: money management (same rules as the website) =====
+function mmLadder(s){
+  try{var v=typeof s.ladder==='string'?JSON.parse(s.ladder):s.ladder;if(v&&v.length)return v.map(Number);}catch(e){}
+  return [7,12,18,26,36,48];
+}
+function mmCap(s,t){for(var i=t.length-1;i>=0;i--){var x=t[i];if(x.status&&x.status!=='closed')continue;if(x.capital_after!=null)return Number(x.capital_after);}return Number(s.start_capital);}
+function mmTally(t){var w=0,l=0;for(var i=0;i<t.length;i++){var x=t[i];if(x.status&&x.status!=='closed')continue;if(x.result==='win')w++;else if(x.result==='loss')l++;}return {wins:w,losses:l};}
+function mmStreak(t){var n=0;for(var i=t.length-1;i>=0;i--){if(t[i].result==='loss')n++;else break;}return n;}
+function mmPeak(s,t){var p=Number(s.start_capital);for(var i=0;i<t.length;i++){var x=t[i];if(x.status&&x.status!=='closed')continue;var c=Number(x.capital_after);if(c>p)p=c;}return p;}
+function mmStake(s,t){
+  var C=mmCap(s,t),R=Number(s.payout_pct)/100,base=Number(s.base_stake_pct||8);
+  var m=s.model||'tatura',amt=0,b=C*base/100,peak=mmPeak(s,t);
+  if(m==='tatura'){
+    if(C>=peak){amt=b;}
+    else{var gap=peak-C;amt=(R>0)?gap/R:gap;if(amt<b)amt=b;}
+  }else if(m==='masaniello'){
+    amt=b;
+  }else{
+    var L=mmLadder(s);amt=C*L[Math.min(mmStreak(t),L.length-1)]/100;
+  }
+  if(!isFinite(amt)||amt<0)amt=0;
+  var cap=C*Number(s.max_stake_pct||100)/100;
+  if(amt>cap)amt=cap;
+  return {amount:amt,pct:C>0?amt/C*100:0,capital:C};
+}
+function budgetUsed(t){
+  var s=0;
+  for(var i=0;i<t.length;i++){var x=t[i];if(x.status==='expired'||x.status==='cancelled')continue;s+=Number(x.stake_amount||0);}
+  return Math.round(s*100)/100;
+}
+function numOrNull(v){if(v===null||v===undefined||v==='')return null;var n=Number(v);return isFinite(n)?n:null;}
+function karachiDayStart(){
+  var now=new Date(),off=5*60*60*1000;
+  var local=new Date(now.getTime()+off);
+  local.setUTCHours(0,0,0,0);
+  return new Date(local.getTime()-off).toISOString();
+}
+async function sessionsToday(db,uid){
+  var r=await db.prepare('SELECT COUNT(*) AS n FROM sessions WHERE user_id=? AND started_at>=?').bind(uid,karachiDayStart()).first();
+  return Number(r.n||0);
+}
+function mmStop(s,t){
+  var x=mmTally(t),cap=mmCap(s,t),pnl=cap-Number(s.start_capital);
+  var lim=Number(s.loss_limit||0);
+  if(lim>0&&x.losses>=lim)return 'Loss limit hit - '+x.losses+' losses in this session.';
+  var mt=Number(s.total_trades||0);
+  if(mt>0&&t.length>=mt)return 'Trade target reached - '+mt+' trades.';
+  var ew=Number(s.expected_wins||0);
+  if(ew>0&&x.wins>=ew)return 'Win target reached - '+ew+' wins.';
+  if(cap<=0)return 'Capital exhausted.';
+  if((s.model||'tatura')==='masaniello'&&pnl>=Number(s.start_capital)*Number(s.target_profit_pct||0)/100)return 'Profit target reached.';
+  return null;
+}
+
+// ===== BOT: helpers =====
+function botAuthOk(req, env) {
+  const tok = env.BOT_TOKEN;
+  if (!tok || String(tok).length < 20) return false;
+  return (req.headers.get('Authorization') || '') === 'Bearer ' + tok;
+}
+async function botUser(db, url) {
+  const name = (url.searchParams.get('user') || '').trim().toLowerCase();
+  if (name) return await db.prepare('SELECT id,username FROM users WHERE username=? AND active=1').bind(name).first();
+  return await db.prepare("SELECT id,username FROM users WHERE role='admin' AND active=1 ORDER BY id ASC LIMIT 1").first();
+}
+async function getBotControl(db, uid) {
+  let r = await db.prepare('SELECT * FROM bot_control WHERE user_id=?').bind(uid).first();
+  if (!r) {
+    await db.prepare('INSERT INTO bot_control (user_id,enabled,daily_max_loss) VALUES (?,0,0)').bind(uid).run();
+    r = await db.prepare('SELECT * FROM bot_control WHERE user_id=?').bind(uid).first();
+  }
+  return r;
+}
+async function dayPnl(db, uid) {
+  const d = new Date(); d.setUTCHours(0, 0, 0, 0);
+  const ss = await db.prepare('SELECT * FROM sessions WHERE user_id=? AND started_at>=?').bind(uid, d.toISOString()).all();
+  let total = 0;
+  for (const s of (ss.results || [])) {
+    let end = s.end_capital;
+    if (end == null) {
+      const t = await db.prepare('SELECT capital_after FROM trades WHERE session_id=? ORDER BY seq DESC LIMIT 1').bind(s.id).first();
+      end = t ? t.capital_after : s.start_capital;
+    }
+    total += Number(end) - Number(s.start_capital);
+  }
+  return total;
+}
+async function endActive(db, s, trades, reason) {
+  await db.prepare("UPDATE sessions SET status='ended',end_capital=?,ended_at=?,note=? WHERE id=? AND status='active'")
+    .bind(mmCap(s, trades), new Date().toISOString(), reason, s.id).run();
+}
+async function botState(db, uid) {
+  const c = await getBotControl(db, uid);
+  const st = await getSettings(db, uid);
+  const s = await db.prepare("SELECT * FROM sessions WHERE user_id=? AND status='active' ORDER BY id DESC LIMIT 1").bind(uid).first();
+  let trades = [];
+  if (s) { const tr = await db.prepare('SELECT * FROM trades WHERE session_id=? ORDER BY seq ASC').bind(s.id).all(); trades = tr.results || []; }
+  const x = mmTally(trades);
+  const cap = s ? mmCap(s, trades) : 0;
+  const bud = Number(c.session_budget || 0);
+  const used = budgetUsed(trades);
+  const last = await db.prepare('SELECT t.* FROM trades t JOIN sessions ss ON ss.id=t.session_id WHERE ss.user_id=? ORDER BY t.id DESC LIMIT 1').bind(uid).first();
+  const connected = c.last_seen ? (Date.now() - new Date(c.last_seen).getTime()) < 90000 : false;
+  return {
+    enabled: Number(c.enabled) ? 1 : 0,
+    connected: connected ? 1 : 0,
+    last_seen: c.last_seen || null,
+    day_pnl: await dayPnl(db, uid),
+    session_budget: bud,
+    max_sessions_per_day: Number(c.max_sessions_per_day || 0),
+    daily_max_loss: Number(c.daily_max_loss || 0),
+    settings: {
+      model: st.model, total_capital: Number(st.total_capital), base_stake_pct: Number(st.base_stake_pct),
+      total_trades: Number(st.total_trades), expected_wins: Number(st.expected_wins), loss_limit: Number(st.loss_limit),
+      payout_pct: Number(st.payout_pct), max_stake_pct: Number(st.max_stake_pct), target_profit_pct: Number(st.target_profit_pct)
+    },
+    active_session: s ? {
+      id: s.id, trades: trades.length, wins: x.wins, losses: x.losses,
+      capital: cap, start_capital: Number(s.start_capital),
+      budget: bud, budget_used: used,
+      remaining_trades: Number(s.total_trades) > 0 ? Math.max(0, Number(s.total_trades) - trades.length) : null,
+      pnl: Math.round((cap - Number(s.start_capital)) * 100) / 100
+    } : null,
+    last_trade: last || null
+  };
+}
+async function api(req, env, url) {
+  const db = env.DB;
+  if (!db) return json({ error: 'D1 binding DB is missing. Add a D1 database binding named DB.' }, 500);
+  const p = url.pathname.slice(4);
+  const seg = p.split('/').filter(Boolean);
+  const m = req.method;
+  try {
+    await schema(db);
+
+    if (seg[0] === 'auth' && seg[1] === 'login' && m === 'POST') {
+      const b = await req.json().catch(function () { return {}; });
+      const uname = String(b.username || '').trim().toLowerCase();
+      const u = await db.prepare('SELECT * FROM users WHERE username=?').bind(uname).first();
+      if (!u) return json({ error: 'Invalid username or password' }, 401);
+      if (!u.active) return json({ error: 'This account is disabled' }, 403);
+      const h = await hashPass(String(b.password || ''), u.salt);
+      if (h !== u.pass_hash) return json({ error: 'Invalid username or password' }, 401);
+      const token = randHex(32);
+      const exp = new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+      await db.prepare('INSERT INTO auth_tokens (token,user_id,created_at,expires_at) VALUES (?,?,?,?)').bind(token, u.id, new Date().toISOString(), exp).run();
+      const out = json({ user: { id: u.id, username: u.username, role: u.role, display_name: u.display_name } });
+      out.headers.append('Set-Cookie', 'tt_session=' + token + '; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=2592000');
+      return out;
+    }
+
+    if (seg[0] === 'auth' && seg[1] === 'logout' && m === 'POST') {
+      const t = getCookie(req, 'tt_session');
+      if (t) await db.prepare('DELETE FROM auth_tokens WHERE token=?').bind(t).run();
+      const out = json({ ok: true });
+      out.headers.append('Set-Cookie', 'tt_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0');
+      return out;
+    }
+
+        if (seg[0] === 'bot') {
+      if (!botAuthOk(req, env)) return json({ error: 'Bad bot token' }, 401);
+      const bu = await botUser(db, url);
+      if (!bu) return json({ error: 'Bot user not found' }, 404);
+      const ctl = await getBotControl(db, bu.id);
+      await db.prepare('UPDATE bot_control SET last_seen=? WHERE user_id=?').bind(new Date().toISOString(), bu.id).run();
+      const sess = await db.prepare("SELECT * FROM sessions WHERE user_id=? AND status='active' ORDER BY id DESC LIMIT 1").bind(bu.id).first();
+      let trades = [];
+      if (sess) {
+        const tr = await db.prepare('SELECT * FROM trades WHERE session_id=? ORDER BY seq ASC').bind(sess.id).all();
+        trades = tr.results || [];
+      }
+
+      if (seg[1] === 'next' && m === 'GET') {
+        const market = String(url.searchParams.get('market') || '').trim().toUpperCase();
+        const direction = String(url.searchParams.get('direction') || '').trim().toUpperCase();
+        if (!Number(ctl.enabled)) return json({ allowed: false, go: false, reason: 'BOT_DISABLED', reason_text: 'Bot is switched OFF in the admin panel.' });
+        if (!sess) return json({ allowed: false, go: false, reason: 'NO_ACTIVE_SESSION', reason_text: 'No active session. Press Start session on the website.' });
+        const stop = mmStop(sess, trades);
+        if (stop) { await endActive(db, sess, trades, stop); return json({ allowed: false, go: false, reason: 'SESSION_CLOSED', reason_text: stop }); }
+        const st = mmStake(sess, trades);
+        const bud = Number(ctl.session_budget || 0);
+        if (bud > 0) {
+          const used = budgetUsed(trades);
+          if (used >= bud) { await endActive(db, sess, trades, 'Session budget exhausted.'); return json({ allowed: false, go: false, reason: 'SESSION_BUDGET_EXHAUSTED', reason_text: 'Session budget exhausted.' }); }
+          if (st.amount > bud - used) st.amount = bud - used;
+        }
+        const lim = Number(ctl.daily_max_loss || 0);
+        if (lim > 0) {
+          const pnl = await dayPnl(db, bu.id);
+          if (pnl - st.amount < -lim) {
+            return json({ allowed: false, go: false, reason: 'DAILY_MAX_LOSS_REACHED', reason_text: 'Daily max loss would be broken (today ' + pnl.toFixed(2) + ', next ' + st.amount.toFixed(2) + ', limit ' + lim + ').' });
+          }
+        }
+        const x = mmTally(trades);
+        const amt = Math.round(st.amount * 100) / 100;
+        return json({
+          allowed: true, go: true,
+          session_id: sess.id, market: market || null, direction: direction || null,
+          trade_amount: amt, stake_amount: amt,
+          trade_number: trades.length + 1, seq: trades.length + 1,
+          stake_pct: Math.round(st.pct * 100) / 100,
+          capital: Math.round(st.capital * 100) / 100,
+          payout_pct: Number(sess.payout_pct),
+          wins: x.wins, losses: x.losses,
+          remaining_trades: Number(sess.total_trades) > 0 ? Math.max(0, Number(sess.total_trades) - trades.length) : null
+        });
+      }
+
+      if (seg[1] === 'execute' && m === 'POST') {
+        const b = await req.json().catch(function () { return {}; });
+        const sid = Number(b.session_id || 0);
+        if (!sid) return json({ ok: false, error: 'session_id is required' }, 400);
+        if (!sess) return json({ ok: false, error: 'No active session' }, 409);
+        if (sid !== Number(sess.id)) return json({ ok: false, error: 'Session mismatch' }, 409);
+        const ticket = b.ticket != null && String(b.ticket).trim() !== '' ? String(b.ticket).trim() : null;
+        if (!ticket) return json({ ok: false, error: 'ticket is required' }, 400);
+        const dup = await db.prepare('SELECT id FROM trades WHERE ticket=?').bind(ticket).first();
+        if (dup) return json({ ok: false, error: 'DUPLICATE_TICKET', trade_id: dup.id }, 409);
+        const market = b.market ? String(b.market).trim().toUpperCase() : null;
+        const dir = b.direction ? String(b.direction).trim().toUpperCase() : null;
+        if (dir && dir !== 'BUY' && dir !== 'SELL') return json({ ok: false, error: 'direction must be BUY or SELL' }, 400);
+        const amount = Number(b.trade_amount != null ? b.trade_amount : b.stake_amount);
+        if (!isFinite(amount) || amount <= 0) return json({ ok: false, error: 'trade_amount must be a positive number' }, 400);
+        const capNow = mmCap(sess, trades);
+        const seq = trades.length + 1;
+        const ins = await db.prepare(
+          "INSERT INTO trades (session_id,seq,stake_pct,stake_amount,result,capital_after,created_at,status,market,direction,ticket,lot,entry_price,sl,tp,executed_at,exec_status) " +
+          "VALUES (?,?,?,?,'pending',?,?,'executed',?,?,?,?,?,?,?,?,?)"
+        ).bind(sess.id, seq, capNow > 0 ? (amount / capNow) * 100 : 0, amount, capNow,
+            new Date().toISOString(), market, dir, ticket,
+            numOrNull(b.lot), numOrNull(b.entry_price), numOrNull(b.sl), numOrNull(b.tp),
+            b.executed_at ? String(b.executed_at) : new Date().toISOString(),
+            b.status ? String(b.status) : 'filled').run();
+        return json({ ok: true, trade_id: ins.meta.last_row_id, session_id: sess.id, seq: seq, ticket: ticket, status: 'executed' }, 201);
+      }
+
+      if (seg[1] === 'result' && m === 'POST') {
+        const b = await req.json().catch(function () { return {}; });
+        const res = String(b.result || '').toLowerCase();
+        if (res !== 'win' && res !== 'loss' && res !== 'breakeven') return json({ ok: false, error: 'result must be WIN, LOSS or BREAKEVEN' }, 400);
+        if (!sess) return json({ ok: false, error: 'No active session' }, 409);
+        if (b.session_id !== undefined && Number(b.session_id) !== Number(sess.id)) return json({ ok: false, error: 'Session mismatch' }, 409);
+        const tid = Number(b.trade_id || 0);
+        const ticket = b.ticket != null && String(b.ticket).trim() !== '' ? String(b.ticket).trim() : null;
+        let row = null;
+        if (tid) row = await db.prepare('SELECT * FROM trades WHERE id=? AND session_id=?').bind(tid, sess.id).first();
+        else if (ticket) row = await db.prepare('SELECT * FROM trades WHERE ticket=? AND session_id=?').bind(ticket, sess.id).first();
+        if (row && row.status === 'closed') return json({ ok: false, error: 'DUPLICATE_RESULT', trade_id: row.id }, 409);
+        const cap = mmCap(sess, trades);
+        let profit;
+        if (b.profit !== undefined && b.profit !== null && b.profit !== '') {
+          profit = Number(b.profit);
+          if (!isFinite(profit)) return json({ ok: false, error: 'profit must be a number' }, 400);
+        } else {
+          const R = Number(sess.payout_pct) / 100;
+          const stake = row ? Number(row.stake_amount) : mmStake(sess, trades).amount;
+          profit = res === 'win' ? stake * R : (res === 'loss' ? -stake : 0);
+        }
+        const after = Math.round((cap + profit) * 100) / 100;
+        const col = res === 'win' ? 'wins' : (res === 'loss' ? 'losses' : 'breakeven');
+        let newId = row ? row.id : null;
+        if (row) {
+          await db.batch([
+            db.prepare("UPDATE trades SET status='closed', result=?, profit=?, exit_price=?, closed_at=?, capital_after=? WHERE id=? AND status<>'closed'")
+              .bind(res, profit, numOrNull(b.exit_price), b.closed_at ? String(b.closed_at) : new Date().toISOString(), after, row.id),
+            db.prepare('UPDATE sessions SET ' + col + '=' + col + '+1, end_capital=? WHERE id=?').bind(after, sess.id)
+          ]);
+        } else {
+          if (b.seq !== undefined && Number(b.seq) !== trades.length + 1) return json({ ok: false, error: 'Already recorded or wrong seq. Expected ' + (trades.length + 1) }, 409);
+          const nx = mmStake(sess, trades);
+          const ins2 = await db.prepare(
+            "INSERT INTO trades (session_id,seq,stake_pct,stake_amount,result,capital_after,created_at,status,profit,closed_at) VALUES (?,?,?,?,?,?,?,'closed',?,?)"
+          ).bind(sess.id, trades.length + 1, nx.pct, nx.amount, res, after, new Date().toISOString(), profit, new Date().toISOString()).run();
+          newId = ins2.meta.last_row_id;
+          await db.prepare('UPDATE sessions SET ' + col + '=' + col + '+1, end_capital=? WHERE id=?').bind(after, sess.id).run();
+        }
+        const t2r = await db.prepare('SELECT * FROM trades WHERE session_id=? ORDER BY seq ASC').bind(sess.id).all();
+        const list = t2r.results || [];
+        const stop = mmStop(sess, list);
+        if (stop) await endActive(db, sess, list, stop);
+        return json({ ok: true, trade_id: newId, result: res, profit: profit, capital: after, session_id: sess.id, stopped: stop || null });
+      }
+
+      return json({ error: 'Not found' }, 404);
+    }
+const me = await currentUser(req, db);
+    if (!me) return json({ error: 'Not signed in' }, 401);
+
+    if (seg[0] === 'auth' && seg[1] === 'me' && m === 'GET') {
+      return json({ user: { id: me.id, username: me.username, role: me.role, display_name: me.display_name } });
+    }
+
+        if (seg[0] === 'admin' && seg[1] === 'bot') {
+      if (me.role !== 'admin') return json({ error: 'Forbidden' }, 403);
+      if (m === 'GET') return json(await botState(db, me.id));
+      if (m === 'POST') {
+        const b = await req.json().catch(function () { return {}; });
+        await getBotControl(db, me.id);
+        await getSettings(db, me.id);
+        const n = function (v, d) { const x = Number(v); return isFinite(x) ? x : d; };
+        if (b.enabled !== undefined) await db.prepare('UPDATE bot_control SET enabled=? WHERE user_id=?').bind(Number(b.enabled) ? 1 : 0, me.id).run();
+        if (b.daily_max_loss !== undefined) await db.prepare('UPDATE bot_control SET daily_max_loss=? WHERE user_id=?').bind(Math.max(0, n(b.daily_max_loss, 0)), me.id).run();
+        if (b.session_budget !== undefined) await db.prepare('UPDATE bot_control SET session_budget=? WHERE user_id=?').bind(Math.max(0, n(b.session_budget, 0)), me.id).run();
+        if (b.max_sessions_per_day !== undefined) await db.prepare('UPDATE bot_control SET max_sessions_per_day=? WHERE user_id=?').bind(Math.max(0, n(b.max_sessions_per_day, 0)), me.id).run();
+        const plan = ['total_capital','base_stake_pct','total_trades','expected_wins','loss_limit','payout_pct','max_stake_pct','target_profit_pct'];
+        const sets = [], vals = [];
+        plan.forEach(function (k) { if (b[k] === undefined) return; const v = Number(b[k]); if (!isFinite(v) || v < 0) return; sets.push(k + '=?'); vals.push(v); });
+        if (b.model !== undefined) { sets.push('model=?'); vals.push(String(b.model)); }
+        if (sets.length) { vals.push(me.id); await db.prepare('UPDATE settings SET ' + sets.join(',') + ' WHERE user_id=?').bind(...vals).run(); }
+        return json(await botState(db, me.id));
+      }
+    }
+if (seg[0] === 'admin' && seg[1] === 'users') {
+      if (me.role !== 'admin') return json({ error: 'Forbidden' }, 403);
+
+      if (seg.length === 2 && m === 'GET') {
+        const r = await db.prepare("SELECT u.id,u.username,u.role,u.display_name,u.active,u.created_at,(SELECT COUNT(*) FROM sessions s WHERE s.user_id=u.id) AS sessions,(SELECT COALESCE(SUM(s.wins),0) FROM sessions s WHERE s.user_id=u.id) AS wins,(SELECT COALESCE(SUM(s.losses),0) FROM sessions s WHERE s.user_id=u.id) AS losses,(SELECT COALESCE(SUM(COALESCE(s.end_capital,s.start_capital)-s.start_capital),0) FROM sessions s WHERE s.user_id=u.id) AS net,(SELECT st.total_capital FROM settings st WHERE st.user_id=u.id) AS capital FROM users u ORDER BY u.id ASC").all();
+        return json(r.results || []);
+      }
+
+      if (seg.length === 2 && m === 'POST') {
+        const b = await req.json().catch(function () { return {}; });
+        let username = randUser();
+        for (let i = 0; i < 6; i++) {
+          const clash = await db.prepare('SELECT id FROM users WHERE username=?').bind(username).first();
+          if (!clash) break;
+          username = randUser();
+        }
+        const password = randPass(12);
+        const salt = randHex(16);
+        const hash = await hashPass(password, salt);
+        const ins = await db.prepare("INSERT INTO users (username,pass_hash,salt,role,display_name,active,created_at) VALUES (?,?,?,'user',?,1,?)")
+          .bind(username, hash, salt, String(b.display_name || ''), new Date().toISOString()).run();
+        const uid = ins.meta.last_row_id;
+        await getSettings(db, uid);
+        return json({ id: uid, username: username, password: password }, 201);
+      }
+
+      if (seg.length === 3) {
+        const id = Number(seg[2]);
+        if (!id) return json({ error: 'Bad user id' }, 400);
+
+        if (m === 'PATCH') {
+          const b = await req.json().catch(function () { return {}; });
+          const f = [], v = [];
+          if (b.display_name !== undefined) { f.push('display_name=?'); v.push(String(b.display_name)); }
+          if (b.active !== undefined) { f.push('active=?'); v.push(Number(b.active) ? 1 : 0); }
+          if (b.role !== undefined) { f.push('role=?'); v.push(String(b.role) === 'admin' ? 'admin' : 'user'); }
+          if (!f.length) return json({ error: 'Nothing to update' }, 400);
+          v.push(id);
+          await db.prepare('UPDATE users SET ' + f.join(',') + ' WHERE id=?').bind(...v).run();
+          if (Number(b.active) === 0) await db.prepare('DELETE FROM auth_tokens WHERE user_id=?').bind(id).run();
+          return json({ ok: true });
+        }
+
+        if (m === 'DELETE') {
+          if (id === me.id) return json({ error: 'You cannot delete your own account' }, 400);
+          const u = await db.prepare('SELECT role FROM users WHERE id=?').bind(id).first();
+          if (!u) return json({ error: 'Not found' }, 404);
+          if (u.role === 'admin') {
+            const c = await db.prepare("SELECT COUNT(*) AS n FROM users WHERE role='admin'").first();
+            if (Number(c.n) <= 1) return json({ error: 'Cannot delete the last admin' }, 400);
+          }
+          await db.batch([
+            db.prepare('DELETE FROM trades WHERE session_id IN (SELECT id FROM sessions WHERE user_id=?)').bind(id),
+            db.prepare('DELETE FROM sessions WHERE user_id=?').bind(id),
+            db.prepare('DELETE FROM auth_tokens WHERE user_id=?').bind(id),
+            db.prepare('DELETE FROM settings WHERE user_id=?').bind(id),
+            db.prepare('DELETE FROM users WHERE id=?').bind(id)
+          ]);
+          return json({ ok: true });
+        }
+      }
+
+      if (seg.length === 4 && seg[3] === 'password' && m === 'POST') {
+        const id = Number(seg[2]);
+        const password = randPass(12);
+        const salt = randHex(16);
+        const hash = await hashPass(password, salt);
+        await db.batch([
+          db.prepare('UPDATE users SET pass_hash=?,salt=? WHERE id=?').bind(hash, salt, id),
+          db.prepare('DELETE FROM auth_tokens WHERE user_id=?').bind(id)
+        ]);
+        return json({ password: password });
+      }
+
+      if (seg.length === 4 && seg[3] === 'reset' && m === 'POST') {
+        const id = Number(seg[2]);
+        const b = await req.json().catch(function () { return {}; });
+        const cap = Number(b.capital);
+        await db.batch([
+          db.prepare('DELETE FROM trades WHERE session_id IN (SELECT id FROM sessions WHERE user_id=?)').bind(id),
+          db.prepare('DELETE FROM sessions WHERE user_id=?').bind(id),
+          db.prepare('UPDATE settings SET total_capital=? WHERE user_id=?').bind(isFinite(cap) && cap > 0 ? cap : 1000, id)
+        ]);
+        return json({ ok: true });
+      }
+    }
+
+    if (seg[0] === 'settings' && m === 'GET') return json(await getSettings(db, me.id));
+
+    if (seg[0] === 'settings' && m === 'PUT') {
+      const b = await req.json();
+      await getSettings(db, me.id);
+      await db.prepare("UPDATE settings SET model=?,total_capital=?,base_stake_pct=?,total_trades=?,expected_wins=?,loss_limit=?,payout_pct=?,target_profit_pct=?,max_stake_pct=?,ladder=? WHERE user_id=?")
+        .bind(String(b.model || 'tatura'), Number(b.total_capital), Number(b.base_stake_pct), Number(b.total_trades),
+          Number(b.expected_wins), Number(b.loss_limit), Number(b.payout_pct), Number(b.target_profit_pct),
+          Number(b.max_stake_pct), String(b.ladder), me.id).run();
+      return json(await getSettings(db, me.id));
+    }
+
+    if (seg[0] === 'sessions' && seg.length === 1 && m === 'GET') {
+      const r = await db.prepare('SELECT * FROM sessions WHERE user_id=? ORDER BY id DESC').bind(me.id).all();
+      return json(r.results || []);
+    }
+
+    if (seg[0] === 'sessions' && seg.length === 1 && m === 'POST') {
+      const b = await req.json();
+      const ctl = await getBotControl(db, me.id);
+      const limit = Number(ctl.max_sessions_per_day || 0);
+      const cap = limit > 0 ? limit : 1000000;
+      const dayStart = karachiDayStart();
+      const r = await db.prepare(
+        "INSERT INTO sessions (started_at,model,start_capital,base_stake_pct,total_trades,expected_wins,loss_limit,payout_pct,target_profit_pct,max_stake_pct,ladder,status,user_id) " +
+        "SELECT ?,?,?,?,?,?,?,?,?,?,?,'active',? WHERE (SELECT COUNT(*) FROM sessions WHERE user_id=? AND started_at>=?) < ?"
+      ).bind(new Date().toISOString(), String(b.model || 'tatura'), Number(b.start_capital), Number(b.base_stake_pct),
+          Number(b.total_trades), Number(b.expected_wins), Number(b.loss_limit), Number(b.payout_pct),
+          Number(b.target_profit_pct), Number(b.max_stake_pct), String(b.ladder), me.id,
+          me.id, dayStart, cap).run();
+      if (!r.meta.changes) return json({ error: 'DAILY_SESSION_LIMIT_REACHED', limit: limit, used: await sessionsToday(db, me.id) }, 409);
+      return json({ id: r.meta.last_row_id }, 201);
+    }
+
+    if (seg[0] === 'sessions' && seg.length === 2) {
+      const id = Number(seg[1]);
+      const own = await db.prepare('SELECT * FROM sessions WHERE id=? AND user_id=?').bind(id, me.id).first();
+      if (!own) return json({ error: 'Not found' }, 404);
+      if (m === 'GET') {
+        const t = await db.prepare('SELECT * FROM trades WHERE session_id=? ORDER BY seq ASC').bind(id).all();
+        return json({ session: own, trades: t.results || [] });
+      }
+      if (m === 'PATCH') {
+        const b = await req.json();
+        const f = [], v = [];
+        ['status', 'end_capital', 'ended_at', 'note', 'start_capital'].forEach(function (k) {
+          if (b[k] !== undefined) { f.push(k + '=?'); v.push(b[k]); }
+        });
+        if (!f.length) return json({ error: 'Nothing to update' }, 400);
